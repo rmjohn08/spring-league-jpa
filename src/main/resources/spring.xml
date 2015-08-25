@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+        
+	<context:component-scan base-package="net.rmj.league" />	
+	<context:annotation-config />
+	
+	<bean id="dataSource" 
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+        <property name="url" value="jdbc:hsqldb:mem://leaguedb" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />    
+    </bean>
+    
+    <bean id="entityManagerFactory"
+    	class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+    	p:packagesToScan="net.rmj.league"
+    	p:dataSource-ref="dataSource">
+    	<property name="jpaVendorAdapter">
+    		<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+    			<property name="generateDdl" value="true" />
+    			<property name="showSql" value="true" />
+    		</bean>
+    	</property>
+    </bean>	
+    
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    	<property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    
+    <!-- must provide the proxy-target since Dao classes are implementing interface  -->
+    <tx:annotation-driven transaction-manager="transactionManager"   proxy-target-class="true" />
+    
+    <!-- bean
+        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+        id="entityManagerFactory">
+        <property name="dataSource" ref="dataSource" />
+    </bean -->
+    
+    <!--  bean class="org.springframework.orm.jpa.JpaTransactionManager"
+        id="transactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean -->
+	
+	<!--  tx:annotation-driven transaction-manager="transactionManager" / -->
+	<!--  tx:annotation-driven transaction-manager="hsqldb-league" / -->
+	
+	<!--  bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/ -->
+     	
+</beans>
